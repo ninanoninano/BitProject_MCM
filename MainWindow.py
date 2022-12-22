@@ -10,6 +10,7 @@ import pyautogui
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+import datetime
 
 # GUI 처리
 from PyQt5 import QtWidgets
@@ -34,6 +35,8 @@ class WindowClass(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
         self.cap = cv2.VideoCapture(0)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 530)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 510)
         self.running = False  # Camera 구동 여부
 
         self.record = False
@@ -136,11 +139,11 @@ class WindowClass(QMainWindow, form_class):
 
     # 카메라 컨트롤
     def videoCam(self):
-
         while self.running:
             ret, frame = self.cap.read()
             hands = self.detector.findHands(frame, draw=False)
             if ret is True:
+                # 손을 이용한 거리 분석
                 if hands:
                     lmList = hands[0]['lmList']
                     # x, y, w, h = hands[0]['bbox']
@@ -154,8 +157,9 @@ class WindowClass(QMainWindow, form_class):
                     distanceCM = A * distance ** 2 + B * distance + C
                     self.distanceSilder(distanceCM)
 
-                self.displayImage(frame, 1)
+                self.updateTime()
 
+                self.displayImage(frame, 1)
                 # 녹화 기능 -------------------------------------------------------
                 if self.record:
                     img = pyautogui.screenshot()
@@ -164,6 +168,13 @@ class WindowClass(QMainWindow, form_class):
                     self.recordVideo.write(rframe)
 
                 cv2.waitKey()
+
+
+    def updateTime(self):
+        # 현재시각을 불러와 문자열로저장
+        now = datetime.datetime.now()
+        nowDatetime = now.strftime('%Y-%m-%d %H:%M:%S')
+        self.pt_Timer.setText(nowDatetime)
 
     # 거리에 따른 슬라이더 이동
     def distanceSilder(self, distanceCM):
@@ -186,21 +197,20 @@ class WindowClass(QMainWindow, form_class):
                 self.ptex_Bar_Distance.setValue(distanceCM)
 
     # 카메라 실시간 영상 처리
-    def displayImage(self, img, window=1):
-        qformat = QImage.Format_Indexed8
-        if len(img.shape) == 3:
-            if (img.shape[2]) == 4:
-                qformat = QImage.Format_RGBA888
-            else:
-                qformat = QImage.Format_RGB888
-        img = QImage(img, img.shape[1], img.shape[0], qformat)
-        img = img.rgbSwapped()
+    def displayImage(self, frame, window=1):
+        img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        h, w, c = img.shape
+        qImg = QtGui.QImage(img.data, w, h, w*c, QtGui.QImage.Format_RGB888)
+        pixmap = QtGui.QPixmap.fromImage(qImg)
+
+        # 출력 영상을 resize해주기
+        p = pixmap.scaled(int(w*400/h), 400, QtCore.Qt.IgnoreAspectRatio)
 
         if self.tabWidget.currentIndex() == 0:
-            self.pt_WebCamera.setPixmap(QPixmap.fromImage(img))
+            self.pt_WebCamera.setPixmap(p)
             self.pt_WebCamera.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignHCenter)
         elif self.tabWidget.currentIndex() == 1:
-            self.ptex_WebCamera.setPixmap(QPixmap.fromImage(img))
+            self.ptex_WebCamera.setPixmap(p)
             self.ptex_WebCamera.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignHCenter)
 
     # 카메라 정지
