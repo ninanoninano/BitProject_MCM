@@ -8,12 +8,13 @@ import datetime
 import io
 import pyautogui
 import numpy as np
-
+from PyQt5.QtCore import QTimer, QTime
 
 # UI파일 연결
 # 단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
 form_class = uic.loadUiType("untitled.ui")[0]
 from_secondwindow = uic.loadUiType("untitled2.ui")[0]
+
 
 out = cv2.VideoWriter('3.mp4', cv2.VideoWriter_fourcc(*'XVID'), 15, (1920, 1080))
 
@@ -36,7 +37,6 @@ class WindowClass(QMainWindow, form_class) :
         self.pushButton_8.clicked.connect(self.stop2)
         self.pushButton_6.clicked.connect(self.button_Second)
 
-
     def fileOpen(self):
         fliename = QFileDialog.getOpenFileName(self, '파일 불러오기', '', ' PowerPoint(*.pptx *ppt);; All File(*)')
 
@@ -51,6 +51,7 @@ class WindowClass(QMainWindow, form_class) :
 
     def videocam(self):
         cap = cv2.VideoCapture(0)
+
         while self.running:
             ret, frame = cap.read()
             if ret == True:
@@ -85,8 +86,6 @@ class WindowClass(QMainWindow, form_class) :
         self.second.exec()
         self.show()
 
-
-
     def camStart2(self):
         self.running = True
         self.videocam2()
@@ -116,6 +115,7 @@ class WindowClass(QMainWindow, form_class) :
     def stop2(self):
         self.running = False
         self.label_12.clear()
+
 
 
 class secondwindow(QDialog, QWidget, from_secondwindow):
