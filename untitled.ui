@@ -371,17 +371,14 @@
        </property>
       </widget>
      </widget>
-     <widget class="QLabel" name="pt_Timer">
+     <widget class="QLCDNumber" name="pt_lcdNumber">
       <property name="geometry">
        <rect>
-        <x>880</x>
+        <x>903</x>
         <y>530</y>
-        <width>111</width>
-        <height>20</height>
+        <width>91</width>
+        <height>23</height>
        </rect>
-      </property>
-      <property name="text">
-       <string>0000-00-00 00:00:00</string>
       </property>
      </widget>
     </widget>

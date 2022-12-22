@@ -10,7 +10,8 @@ import pyautogui
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-import datetime
+
+from datetime import datetime, timedelta
 
 # GUI 처리
 from PyQt5 import QtWidgets
@@ -34,6 +35,7 @@ form_class = uic.loadUiType("untitled.ui")[0]
 class WindowClass(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
+        self.old = None
         self.cap = cv2.VideoCapture(0)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 530)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 510)
@@ -122,7 +124,7 @@ class WindowClass(QMainWindow, form_class):
 
     # 중지 버튼 클릭시
     def stop(self):
-        self.buttonEnabled(True, True, False)
+        self.buttonEnabled(True, True, False, True)
         self.isFolder()
 
         tabIndex = self.tabWidget.currentIndex()
@@ -134,11 +136,12 @@ class WindowClass(QMainWindow, form_class):
     # 시작 버튼 클릭시
     def start(self):
         self.running = True
-        self.buttonEnabled(False, False, True)
+        self.buttonEnabled(False, False, True, False)
         self.videoCam()
 
     # 카메라 컨트롤
     def videoCam(self):
+        self.old = datetime.now()
         while self.running:
             ret, frame = self.cap.read()
             hands = self.detector.findHands(frame, draw=False)
@@ -157,7 +160,7 @@ class WindowClass(QMainWindow, form_class):
                     distanceCM = A * distance ** 2 + B * distance + C
                     self.distanceSilder(distanceCM)
 
-                self.updateTime()
+                self.updateTime(self.old)
 
                 self.displayImage(frame, 1)
                 # 녹화 기능 -------------------------------------------------------
@@ -169,12 +172,12 @@ class WindowClass(QMainWindow, form_class):
 
                 cv2.waitKey()
 
-
-    def updateTime(self):
-        # 현재시각을 불러와 문자열로저장
-        now = datetime.datetime.now()
-        nowDatetime = now.strftime('%Y-%m-%d %H:%M:%S')
-        self.pt_Timer.setText(nowDatetime)
+    # 영상 출력시
+    def updateTime(self, old):
+        # 현재 시각을 불러와 문자열로 저장
+        now = datetime.now()
+        timer = now - old
+        self.pt_lcdNumber.display(timer.seconds)
 
     # 거리에 따른 슬라이더 이동
     def distanceSilder(self, distanceCM):
@@ -224,7 +227,7 @@ class WindowClass(QMainWindow, form_class):
     # 녹화 버튼 클릭시
     def recording(self):
         self.running = True
-        self.buttonEnabled(False, False, True)
+        self.buttonEnabled(False, False, True, False)
         self.videoCam()
 
     # 녹화 종료
@@ -239,11 +242,12 @@ class WindowClass(QMainWindow, form_class):
             self.ptex_WebCamera.clear()
 
     # 버튼의 활성 여부 변경
-    def buttonEnabled(self, record, start, stop):
+    def buttonEnabled(self, record, start, stop, option):
         self.pt_Btn_Recording.setEnabled(record)
         self.pt_Btn_Start.setEnabled(start)
         self.pt_Btn_Stop.setEnabled(stop)
-
+        self.pt_Btn_Stop.setEnabled(stop)
+        self.pt_Btn_OptionDialog.setEnabled(option)
     # # 웹캠 조작 메서드
     # def run(self):
     #     cap = cv2.VideoCapture(0)
