@@ -22,6 +22,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import *
 
 
+import SelectWindowCapture
 from dlg_motionSetting import dialog_window
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -35,17 +36,20 @@ form_class = uic.loadUiType("untitled.ui")[0]
 class WindowClass(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
-        self.old = None
+        self.tabIndex = 0           # 탭 인덱스 번호
+        self.old = None             # 타이머 시작 시간
+
+        self.running = False        # Camera 구동 여부
+        self.record = False         # 녹화 여부
+        self.recordVideo = None     # 녹화 프레임
+
+        # Camera 세팅
         self.cap = cv2.VideoCapture(0)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 530)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 510)
-        self.running = False  # Camera 구동 여부
 
-        self.record = False
-        self.recordVideo = None
-
+        # 손 거리 측정 용
         self.motionData = ['None']  # 모션 데이터 List
-
         # 손 거리 측정
         x = [300, 245, 200, 170, 145, 130, 112, 103, 93, 87, 80, 75, 70, 67, 62, 59, 57]
         y = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]
@@ -65,17 +69,18 @@ class WindowClass(QMainWindow, form_class):
 
         # 설정 변경 다이얼로그 버튼
         self.pt_Btn_OptionDialog.clicked.connect(self.OptionDialog)
+        self.ptex_Btn_OptionDialog.clicked.connect(self.OptionDialog)
 
-        # 발표 시작 종료 버튼
+        # 시작 종료 버튼
         self.pt_Btn_Start.clicked.connect(self.start)
-        self.pt_Btn_Stop.clicked.connect(self.stop)
-
-        # 연습 시작 종료 버튼
         self.ptex_Btn_Start.clicked.connect(self.start)
+
+        self.pt_Btn_Stop.clicked.connect(self.stop)
         self.ptex_Btn_Stop.clicked.connect(self.stop)
 
         # 녹화 버튼
         self.pt_Btn_Recording.clicked.connect(self.recording)
+        self.ptex_Btn_Recording.clicked.connect(self.recording)
 
     # ppt 파일 열기
     def pptfileOpen(self):
@@ -84,15 +89,15 @@ class WindowClass(QMainWindow, form_class):
         if fliename[0]:
             self.Line_PPTLink.setText(fliename[0])
         else:
-            print("파일 안 골랐음")
+            print("파일을 선택하지 않았습니다.")
 
     # 저장 폴더 지정
     def saveFolderSelect(self):
         fliename = QFileDialog.getExistingDirectory(self, "select Directory")
-        if fliename[0]:
-            self.Line_SaveFolder.setText(fliename)
+        if fliename == "":
+            print("폴더를 선택하지 않았습니다.")
         else:
-            print("파일 안 골랐음")
+            self.Line_SaveFolder.setText(fliename)
         self.isFolder()
 
     def isFolder(self):
@@ -104,10 +109,11 @@ class WindowClass(QMainWindow, form_class):
             self.recordVideo = cv2.VideoWriter(
                 f'{self.Line_SaveFolder.text()}/test.mp4v',
                 cv2.VideoWriter_fourcc(*'XVID'), 15,
-                (1920, 1080))
+                (1024, 717))
 
     # 탭 변경시
     def tabChanged(self):
+        self.tabIndex = self.tabWidget.currentIndex()
         self.stop()
 
     # 다이얼로그 띄우기
@@ -124,24 +130,24 @@ class WindowClass(QMainWindow, form_class):
 
     # 중지 버튼 클릭시
     def stop(self):
-        self.buttonEnabled(True, True, False, True)
+        self.buttonEnabled(self.tabIndex, True, True, True, True, False, True)
         self.isFolder()
 
-        tabIndex = self.tabWidget.currentIndex()
         if self.record:
-            self.recordingStop(tabIndex)
+            self.recordingStop()
         else:
-            self.cameraStop(tabIndex)
+            self.cameraStop()
 
     # 시작 버튼 클릭시
     def start(self):
         self.running = True
-        self.buttonEnabled(False, False, True, False)
+        self.buttonEnabled(self.tabIndex, False, False, False, False, True, False)
         self.videoCam()
 
     # 카메라 컨트롤
     def videoCam(self):
         self.old = datetime.now()
+        capture = SelectWindowCapture.WindowCapture("Presentation Project", 20)
         while self.running:
             ret, frame = self.cap.read()
             hands = self.detector.findHands(frame, draw=False)
@@ -160,24 +166,28 @@ class WindowClass(QMainWindow, form_class):
                     distanceCM = A * distance ** 2 + B * distance + C
                     self.distanceSilder(distanceCM)
 
-                self.updateTime(self.old)
+                self.updateTimeCount(self.old)
 
                 self.displayImage(frame, 1)
                 # 녹화 기능 -------------------------------------------------------
                 if self.record:
-                    img = pyautogui.screenshot()
-                    rframe = np.array(img)
-                    rframe = cv2.cvtColor(rframe, cv2.COLOR_BGR2RGB)
-                    self.recordVideo.write(rframe)
+                    img = capture.screenshot()
+                    self.recordVideo.write(img)
 
                 cv2.waitKey()
 
-    # 영상 출력시
-    def updateTime(self, old):
+    # 영상 출력시 시간 카운트
+    def updateTimeCount(self, old):
         # 현재 시각을 불러와 문자열로 저장
         now = datetime.now()
         timer = now - old
-        self.pt_lcdNumber.display(timer.seconds)
+        min = timer.seconds // 60
+        sec = timer.seconds % 60
+
+        if self.tabWidget.currentIndex() == 0:
+            self.pt_lcdNumber.display(f'{min}:{sec}')
+        elif self.tabWidget.currentIndex() == 1:
+            self.ptex_lcdNumber.display(f'{min}:{sec}')
 
     # 거리에 따른 슬라이더 이동
     def distanceSilder(self, distanceCM):
@@ -206,7 +216,7 @@ class WindowClass(QMainWindow, form_class):
         qImg = QtGui.QImage(img.data, w, h, w*c, QtGui.QImage.Format_RGB888)
         pixmap = QtGui.QPixmap.fromImage(qImg)
 
-        # 출력 영상을 resize해주기
+        # 출력 영상을 resize해 주기
         p = pixmap.scaled(int(w*400/h), 400, QtCore.Qt.IgnoreAspectRatio)
 
         if self.tabWidget.currentIndex() == 0:
@@ -217,37 +227,47 @@ class WindowClass(QMainWindow, form_class):
             self.ptex_WebCamera.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignHCenter)
 
     # 카메라 정지
-    def cameraStop(self, tabIndex):
+    def cameraStop(self):
         self.running = False
-        if tabIndex == 0:
+        if self.tabIndex == 0:
             self.pt_WebCamera.clear()
-        elif tabIndex == 1:
+        elif self.tabIndex == 1:
             self.ptex_WebCamera.clear()
 
     # 녹화 버튼 클릭시
     def recording(self):
         self.running = True
-        self.buttonEnabled(False, False, True, False)
+        self.buttonEnabled(self.tabIndex, False, False, False, False, True, False)
         self.videoCam()
 
     # 녹화 종료
-    def recordingStop(self, tabIndex):
+    def recordingStop(self):
         self.running = False
         self.record = False
         self.recordVideo.release()
 
-        if tabIndex == 0:
+        if self.tabIndex == 0:
             self.pt_WebCamera.clear()
-        elif tabIndex == 1:
+        elif self.tabIndex == 1:
             self.ptex_WebCamera.clear()
 
     # 버튼의 활성 여부 변경
-    def buttonEnabled(self, record, start, stop, option):
-        self.pt_Btn_Recording.setEnabled(record)
-        self.pt_Btn_Start.setEnabled(start)
-        self.pt_Btn_Stop.setEnabled(stop)
-        self.pt_Btn_Stop.setEnabled(stop)
-        self.pt_Btn_OptionDialog.setEnabled(option)
+    def buttonEnabled(self, index, ppt, folder, record, start, stop, option):
+        self.Btn_PPTFileOpen.setEnabled(ppt)
+        self.Btn_SaveFolder.setEnabled(folder)
+
+        if index == 0:
+            self.pt_Btn_Recording.setEnabled(record)
+            self.pt_Btn_Start.setEnabled(start)
+            self.pt_Btn_Stop.setEnabled(stop)
+            self.pt_Btn_OptionDialog.setEnabled(option)
+
+        elif index == 1:
+            self.ptex_Btn_Recording.setEnabled(record)
+            self.ptex_Btn_Start.setEnabled(start)
+            self.ptex_Btn_Stop.setEnabled(stop)
+            self.ptex_Btn_OptionDialog.setEnabled(option)
+
     # # 웹캠 조작 메서드
     # def run(self):
     #     cap = cv2.VideoCapture(0)
