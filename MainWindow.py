@@ -103,9 +103,11 @@ class WindowClass(QMainWindow, form_class):
     def isFolder(self):
         if self.Line_SaveFolder.text() == '':
             self.pt_Btn_Recording.setEnabled(False)
+            self.ptex_Btn_Recording.setEnabled(False)
         else:
             self.record = True
             self.pt_Btn_Recording.setEnabled(True)
+            self.ptex_Btn_Recording.setEnabled(True)
             self.recordVideo = cv2.VideoWriter(
                 f'{self.Line_SaveFolder.text()}/test.mp4v',
                 cv2.VideoWriter_fourcc(*'XVID'), 15,
