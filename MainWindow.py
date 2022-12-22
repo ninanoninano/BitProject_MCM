@@ -243,6 +243,7 @@ class WindowClass(QMainWindow, form_class):
         self.pt_Btn_Recording.setEnabled(record)
         self.pt_Btn_Start.setEnabled(start)
         self.pt_Btn_Stop.setEnabled(stop)
+
     # # 웹캠 조작 메서드
     # def run(self):
     #     cap = cv2.VideoCapture(0)
