@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 
 # GUI 처리
 from PyQt5 import QtWidgets
+from PyQt5 import QtGui
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
 from PyQt5 import uic
@@ -32,6 +33,7 @@ form_class = uic.loadUiType("untitled.ui")[0]
 class WindowClass(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
+        self.cap = cv2.VideoCapture(0)
         self.running = False  # Camera 구동 여부
 
         self.record = False
@@ -95,7 +97,7 @@ class WindowClass(QMainWindow, form_class):
             self.record = True
             self.pt_Btn_Recording.setEnabled(True)
             self.recordVideo = cv2.VideoWriter(
-                f'{self.Line_SaveFolder.text()}/test.mp4',
+                f'{self.Line_SaveFolder.text()}/test.mp4v',
                 cv2.VideoWriter_fourcc(*'XVID'), 15,
                 (1920, 1080))
 
@@ -134,10 +136,9 @@ class WindowClass(QMainWindow, form_class):
 
     # 카메라 컨트롤
     def videoCam(self):
-        cap = cv2.VideoCapture(0)
 
         while self.running:
-            ret, frame = cap.read()
+            ret, frame = self.cap.read()
             hands = self.detector.findHands(frame, draw=False)
             if ret is True:
                 if hands:
