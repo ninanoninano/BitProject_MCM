@@ -1,14 +1,14 @@
 <RCC>
   <qresource prefix="icon_file">
-    <file>icon/icon_file.jpg</file>
-  </qresource>
-  <qresource prefix="icon_timer">
-    <file>icon/icon_timer.jpg</file>
-  </qresource>
-  <qresource prefix="icon_PPT">
-    <file>icon/icon_PPT.jpg</file>
+    <file>icon/icon_file.png</file>
   </qresource>
   <qresource prefix="icon_Rec">
-    <file>icon/icon_rec.jpg</file>
+    <file>icon/icon_rec.png</file>
+  </qresource>
+  <qresource prefix="icon_timer">
+    <file>icon/icon_timer.png</file>
+  </qresource>
+  <qresource prefix="icon_PPT">
+    <file>icon/icon_ppt.png</file>
   </qresource>
 </RCC>

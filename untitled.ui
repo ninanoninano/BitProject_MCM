@@ -74,7 +74,7 @@
        </property>
        <property name="icon">
         <iconset resource="icon.qrc">
-         <normaloff>:/icon_PPT/icon/icon_PPT.jpg</normaloff>:/icon_PPT/icon/icon_PPT.jpg</iconset>
+         <normaloff>:/icon_PPT/icon/icon_ppt.png</normaloff>:/icon_PPT/icon/icon_ppt.png</iconset>
        </property>
       </widget>
      </item>
@@ -111,8 +111,8 @@
         <string>Select</string>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>icon/icon_file.jpg</normaloff>icon/icon_file.jpg</iconset>
+        <iconset resource="icon.qrc">
+         <normaloff>:/icon_file/icon/icon_file.png</normaloff>:/icon_file/icon/icon_file.png</iconset>
        </property>
       </widget>
      </item>
@@ -326,8 +326,8 @@
 </string>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>icon/icon_rec.jpg</normaloff>icon/icon_rec.jpg</iconset>
+          <iconset resource="icon.qrc">
+           <normaloff>:/icon_Rec/icon/icon_rec.png</normaloff>:/icon_Rec/icon/icon_rec.png</iconset>
          </property>
         </widget>
        </item>
@@ -407,6 +407,28 @@
         <string/>
        </property>
       </widget>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>734</x>
+        <y>527</y>
+        <width>50</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">image: url(:/icon_timer/icon/icon_timer.png);</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="Tab_ptex">

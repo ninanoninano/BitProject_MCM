@@ -19,9 +19,9 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
-
+# from icon_rc import qt_resource_name
 from dlg_motionSetting import dialog_window
-from icon_rc import qt_resource_name
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 # UI파일 연결

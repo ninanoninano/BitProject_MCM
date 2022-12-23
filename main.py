@@ -2,7 +2,6 @@ import sys
 from PyQt5.QtWidgets import *
 from MainWindow import WindowClass
 
-
 if __name__ == "__main__":
     # QApplication : 프로그램을 실행시켜주는 클래스
     app = QApplication(sys.argv)
