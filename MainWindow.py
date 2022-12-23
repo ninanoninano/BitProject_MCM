@@ -24,7 +24,8 @@ from PyQt5.QtWidgets import *
 
 import SelectWindowCapture
 from dlg_motionSetting import dialog_window
-# 이건훈 또 왔다감
+# 이건훈 또또  왔다감
+# Main Branch
 # ----------------------------------------------------------------------------------------------------------------------
 
 # UI파일 연결
