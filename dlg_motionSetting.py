@@ -20,6 +20,7 @@ class dialog_window(QDialog, from_dialog):
 
         self.Btn_OK.clicked.connect(self.onOKButtonClicked)
         self.Btn_Cancel.clicked.connect(self.onCancelButtonClicked)
+        self.Btn_Reset.clicked.connect(self.onResetButtonClicked)
 
     def comboInit(self):
         self.comboBox_1.setCurrentText(self.motionData[0])
@@ -41,6 +42,15 @@ class dialog_window(QDialog, from_dialog):
 
     def onCancelButtonClicked(self):
         self.reject()
+
+    def onResetButtonClicked(self):
+        self.comboBox_1.setCurrentText("Home Key")
+        self.comboBox_2.setCurrentText("Home Key")
+        self.comboBox_3.setCurrentText("Home Key")
+        self.comboBox_4.setCurrentText("Home Key")
+        self.comboBox_5.setCurrentText("Home Key")
+        self.comboBox_6.setCurrentText("Home Key")
+
 
     def showModal(self):
         return super().exec_()
