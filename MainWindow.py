@@ -23,6 +23,7 @@ from PyQt5.QtWidgets import *
 
 
 import SelectWindowCapture
+from icon_rc import qt_resource_name
 from dlg_motionSetting import dialog_window
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -81,6 +82,10 @@ class WindowClass(QMainWindow, form_class):
         # 녹화 버튼
         self.pt_Btn_Recording.clicked.connect(self.recording)
         self.ptex_Btn_Recording.clicked.connect(self.recording)
+
+        #타이머 기본시간
+        self.pt_lcdNumber.display("00:00:00")
+        self.ptex_lcdNumber.display("00:00:00")
 
     # ppt 파일 열기
     def pptfileOpen(self):
@@ -183,13 +188,14 @@ class WindowClass(QMainWindow, form_class):
         # 현재 시각을 불러와 문자열로 저장
         now = datetime.now()
         timer = now - old
+        hour = timer.seconds // 3600
         min = timer.seconds // 60
         sec = timer.seconds % 60
 
         if self.tabWidget.currentIndex() == 0:
-            self.pt_lcdNumber.display(f'{min}:{sec}')
+            self.pt_lcdNumber.display('{:02d}:{:02d}:{:02d}'.format(hour, min, sec))
         elif self.tabWidget.currentIndex() == 1:
-            self.ptex_lcdNumber.display(f'{min}:{sec}')
+            self.ptex_lcdNumber.display('{:02d}:{:02d}:{:02d}'.format(hour, min, sec))
 
     # 거리에 따른 슬라이더 이동
     def distanceSilder(self, distanceCM):

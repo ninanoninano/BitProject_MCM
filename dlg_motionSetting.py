@@ -44,12 +44,12 @@ class dialog_window(QDialog, from_dialog):
         self.reject()
 
     def onResetButtonClicked(self):
-        self.comboBox_1.setCurrentText("Home Key")
-        self.comboBox_2.setCurrentText("Home Key")
-        self.comboBox_3.setCurrentText("Home Key")
-        self.comboBox_4.setCurrentText("Home Key")
-        self.comboBox_5.setCurrentText("Home Key")
-        self.comboBox_6.setCurrentText("Home Key")
+        self.comboBox_1.setCurrentText("")
+        self.comboBox_2.setCurrentText("")
+        self.comboBox_3.setCurrentText("")
+        self.comboBox_4.setCurrentText("")
+        self.comboBox_5.setCurrentText("")
+        self.comboBox_6.setCurrentText("")
 
 
     def showModal(self):
