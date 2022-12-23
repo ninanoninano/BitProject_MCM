@@ -10,19 +10,18 @@ import pyautogui
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-import datetime
 
 # GUI 처리
 from PyQt5 import QtWidgets
-from PyQt5 import QtGui
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 
 from dlg_motionSetting import dialog_window
-
+from icon_rc import qt_resource_name
 # ----------------------------------------------------------------------------------------------------------------------
 
 # UI파일 연결
@@ -34,9 +33,6 @@ form_class = uic.loadUiType("untitled.ui")[0]
 class WindowClass(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
-        self.cap = cv2.VideoCapture(0)
-        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 530)
-        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 510)
         self.running = False  # Camera 구동 여부
 
         self.record = False
@@ -54,6 +50,7 @@ class WindowClass(QMainWindow, form_class):
         self.initUI()
 
     def initUI(self):
+        self.lcdNumber.display("00:00:00")
         # 파일 불러오기
         self.Btn_PPTFileOpen.clicked.connect(self.pptfileOpen)
         self.Btn_SaveFolder.clicked.connect(self.saveFolderSelect)
@@ -74,6 +71,12 @@ class WindowClass(QMainWindow, form_class):
 
         # 녹화 버튼
         self.pt_Btn_Recording.clicked.connect(self.recording)
+
+        #타이머
+        self.timer = QTimer()
+        self.watch_start_time = 0
+        self.timer.timeout.connect(self.showTime)
+
 
     # ppt 파일 열기
     def pptfileOpen(self):
@@ -100,7 +103,7 @@ class WindowClass(QMainWindow, form_class):
             self.record = True
             self.pt_Btn_Recording.setEnabled(True)
             self.recordVideo = cv2.VideoWriter(
-                f'{self.Line_SaveFolder.text()}/test.mp4v',
+                f'{self.Line_SaveFolder.text()}/test.mp4',
                 cv2.VideoWriter_fourcc(*'XVID'), 15,
                 (1920, 1080))
 
@@ -124,6 +127,10 @@ class WindowClass(QMainWindow, form_class):
     def stop(self):
         self.buttonEnabled(True, True, False)
         self.isFolder()
+        #
+        self.timer.stop()
+        self.watch_start_time = 0
+        self.lcdNumber.display("00:00:00")
 
         tabIndex = self.tabWidget.currentIndex()
         if self.record:
@@ -135,15 +142,18 @@ class WindowClass(QMainWindow, form_class):
     def start(self):
         self.running = True
         self.buttonEnabled(False, False, True)
+        self.timer.start(1000)
         self.videoCam()
+
 
     # 카메라 컨트롤
     def videoCam(self):
+        cap = cv2.VideoCapture(0)
+
         while self.running:
-            ret, frame = self.cap.read()
+            ret, frame = cap.read()
             hands = self.detector.findHands(frame, draw=False)
             if ret is True:
-                # 손을 이용한 거리 분석
                 if hands:
                     lmList = hands[0]['lmList']
                     # x, y, w, h = hands[0]['bbox']
@@ -157,9 +167,8 @@ class WindowClass(QMainWindow, form_class):
                     distanceCM = A * distance ** 2 + B * distance + C
                     self.distanceSilder(distanceCM)
 
-                self.updateTime()
-
                 self.displayImage(frame, 1)
+
                 # 녹화 기능 -------------------------------------------------------
                 if self.record:
                     img = pyautogui.screenshot()
@@ -168,13 +177,6 @@ class WindowClass(QMainWindow, form_class):
                     self.recordVideo.write(rframe)
 
                 cv2.waitKey()
-
-
-    def updateTime(self):
-        # 현재시각을 불러와 문자열로저장
-        now = datetime.datetime.now()
-        nowDatetime = now.strftime('%Y-%m-%d %H:%M:%S')
-        self.pt_Timer.setText(nowDatetime)
 
     # 거리에 따른 슬라이더 이동
     def distanceSilder(self, distanceCM):
@@ -197,20 +199,21 @@ class WindowClass(QMainWindow, form_class):
                 self.ptex_Bar_Distance.setValue(distanceCM)
 
     # 카메라 실시간 영상 처리
-    def displayImage(self, frame, window=1):
-        img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        h, w, c = img.shape
-        qImg = QtGui.QImage(img.data, w, h, w*c, QtGui.QImage.Format_RGB888)
-        pixmap = QtGui.QPixmap.fromImage(qImg)
-
-        # 출력 영상을 resize해주기
-        p = pixmap.scaled(int(w*400/h), 400, QtCore.Qt.IgnoreAspectRatio)
+    def displayImage(self, img, window=1):
+        qformat = QImage.Format_Indexed8
+        if len(img.shape) == 3:
+            if (img.shape[2]) == 4:
+                qformat = QImage.Format_RGBA888
+            else:
+                qformat = QImage.Format_RGB888
+        img = QImage(img, img.shape[1], img.shape[0], qformat)
+        img = img.rgbSwapped()
 
         if self.tabWidget.currentIndex() == 0:
-            self.pt_WebCamera.setPixmap(p)
+            self.pt_WebCamera.setPixmap(QPixmap.fromImage(img))
             self.pt_WebCamera.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignHCenter)
         elif self.tabWidget.currentIndex() == 1:
-            self.ptex_WebCamera.setPixmap(p)
+            self.ptex_WebCamera.setPixmap(QPixmap.fromImage(img))
             self.ptex_WebCamera.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignHCenter)
 
     # 카메라 정지
@@ -275,3 +278,14 @@ class WindowClass(QMainWindow, form_class):
     # def onExit(self):
     #     print("exit")
     #     self.stop()
+
+    #타이머
+    def showTime(self):
+        self.watch_start_time += 1
+
+        hour = self.watch_start_time // 3600
+        minute = self.watch_start_time % 3600 // 60
+        second = self.watch_start_time % 60
+
+        text = '{:02d}:{:02d}:{:02d}'.format(hour, minute, second)
+        self.lcdNumber.display(text)
