@@ -371,17 +371,14 @@
        </property>
       </widget>
      </widget>
-     <widget class="QLabel" name="pt_Timer">
+     <widget class="QLCDNumber" name="pt_lcdNumber">
       <property name="geometry">
        <rect>
-        <x>655</x>
+        <x>903</x>
         <y>530</y>
-        <width>321</width>
-        <height>20</height>
+        <width>91</width>
+        <height>23</height>
        </rect>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
       </property>
      </widget>
     </widget>
@@ -392,9 +389,9 @@
      <widget class="QWidget" name="gridLayoutWidget_3">
       <property name="geometry">
        <rect>
-        <x>570</x>
+        <x>590</x>
         <y>30</y>
-        <width>421</width>
+        <width>401</width>
         <height>381</height>
        </rect>
       </property>
@@ -574,22 +571,12 @@
        </item>
       </layout>
      </widget>
-     <widget class="QLCDNumber" name="lcdNumber_2">
-      <property name="geometry">
-       <rect>
-        <x>820</x>
-        <y>530</y>
-        <width>171</width>
-        <height>23</height>
-       </rect>
-      </property>
-     </widget>
      <widget class="QGroupBox" name="groupBox_2">
       <property name="geometry">
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>551</width>
+        <width>571</width>
         <height>541</height>
        </rect>
       </property>
@@ -601,7 +588,7 @@
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>531</width>
+         <width>551</width>
          <height>511</height>
         </rect>
        </property>
@@ -632,9 +619,9 @@
      <widget class="QWidget" name="horizontalLayoutWidget_3">
       <property name="geometry">
        <rect>
-        <x>570</x>
+        <x>590</x>
         <y>440</y>
-        <width>421</width>
+        <width>401</width>
         <height>80</height>
        </rect>
       </property>
@@ -682,6 +669,16 @@
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QLCDNumber" name="ptex_lcdNumber">
+      <property name="geometry">
+       <rect>
+        <x>900</x>
+        <y>530</y>
+        <width>91</width>
+        <height>23</height>
+       </rect>
+      </property>
      </widget>
     </widget>
    </widget>
