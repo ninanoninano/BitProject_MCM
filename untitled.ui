@@ -72,6 +72,10 @@
        <property name="text">
         <string>Open</string>
        </property>
+       <property name="icon">
+        <iconset resource="icon.qrc">
+         <normaloff>:/icon_PPT/icon/icon_PPT.jpg</normaloff>:/icon_PPT/icon/icon_PPT.jpg</iconset>
+       </property>
       </widget>
      </item>
      <item row="0" column="1">
@@ -106,6 +110,10 @@
        <property name="text">
         <string>Select</string>
        </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>icon/icon_file.jpg</normaloff>icon/icon_file.jpg</iconset>
+       </property>
       </widget>
      </item>
     </layout>
@@ -132,9 +140,9 @@
      <widget class="QWidget" name="gridLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>590</x>
+        <x>570</x>
         <y>30</y>
-        <width>401</width>
+        <width>421</width>
         <height>380</height>
        </rect>
       </property>
@@ -297,9 +305,9 @@
      <widget class="QWidget" name="horizontalLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>590</x>
+        <x>570</x>
         <y>440</y>
-        <width>401</width>
+        <width>421</width>
         <height>80</height>
        </rect>
       </property>
@@ -316,6 +324,10 @@
           <string>
 녹화
 </string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>icon/icon_rec.jpg</normaloff>icon/icon_rec.jpg</iconset>
          </property>
         </widget>
        </item>
@@ -342,12 +354,37 @@
        </item>
       </layout>
      </widget>
+     <widget class="QLCDNumber" name="lcdNumber">
+      <property name="geometry">
+       <rect>
+        <x>790</x>
+        <y>530</y>
+        <width>201</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="smallDecimalPoint">
+       <bool>false</bool>
+      </property>
+      <property name="digitCount">
+       <number>10</number>
+      </property>
+      <property name="mode">
+       <enum>QLCDNumber::Dec</enum>
+      </property>
+      <property name="segmentStyle">
+       <enum>QLCDNumber::Filled</enum>
+      </property>
+      <property name="intValue" stdset="0">
+       <number>0</number>
+      </property>
+     </widget>
      <widget class="QGroupBox" name="groupBox">
       <property name="geometry">
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>571</width>
+        <width>551</width>
         <height>541</height>
        </rect>
       </property>
@@ -359,7 +396,7 @@
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>551</width>
+         <width>530</width>
          <height>510</height>
         </rect>
        </property>
@@ -371,16 +408,6 @@
        </property>
       </widget>
      </widget>
-     <widget class="QLCDNumber" name="pt_lcdNumber">
-      <property name="geometry">
-       <rect>
-        <x>903</x>
-        <y>530</y>
-        <width>91</width>
-        <height>23</height>
-       </rect>
-      </property>
-     </widget>
     </widget>
     <widget class="QWidget" name="Tab_ptex">
      <attribute name="title">
@@ -389,9 +416,9 @@
      <widget class="QWidget" name="gridLayoutWidget_3">
       <property name="geometry">
        <rect>
-        <x>590</x>
+        <x>570</x>
         <y>30</y>
-        <width>401</width>
+        <width>421</width>
         <height>381</height>
        </rect>
       </property>
@@ -571,12 +598,22 @@
        </item>
       </layout>
      </widget>
+     <widget class="QLCDNumber" name="lcdNumber_2">
+      <property name="geometry">
+       <rect>
+        <x>820</x>
+        <y>530</y>
+        <width>171</width>
+        <height>23</height>
+       </rect>
+      </property>
+     </widget>
      <widget class="QGroupBox" name="groupBox_2">
       <property name="geometry">
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>571</width>
+        <width>551</width>
         <height>541</height>
        </rect>
       </property>
@@ -588,7 +625,7 @@
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>551</width>
+         <width>531</width>
          <height>511</height>
         </rect>
        </property>
@@ -619,9 +656,9 @@
      <widget class="QWidget" name="horizontalLayoutWidget_3">
       <property name="geometry">
        <rect>
-        <x>590</x>
+        <x>570</x>
         <y>440</y>
-        <width>401</width>
+        <width>421</width>
         <height>80</height>
        </rect>
       </property>
@@ -670,16 +707,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QLCDNumber" name="ptex_lcdNumber">
-      <property name="geometry">
-       <rect>
-        <x>900</x>
-        <y>530</y>
-        <width>91</width>
-        <height>23</height>
-       </rect>
-      </property>
-     </widget>
     </widget>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -722,7 +749,9 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="icon.qrc"/>
+ </resources>
  <connections/>
  <slots>
   <slot>aaa()</slot>
